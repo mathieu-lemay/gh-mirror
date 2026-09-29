@@ -64,8 +64,6 @@ func (a *state) shouldSyncOrg(org Org) bool {
 }
 
 func (a *state) parseArgs() {
-	rootDirFlag := flag.String("rootdir", ".", "root directory")
-
 	var selectedOrgs Strings
 	flag.Var(&selectedOrgs, "with-org", "comma separated list of orgs to sync, can be specified multiple times")
 
@@ -74,7 +72,12 @@ func (a *state) parseArgs() {
 
 	flag.Parse()
 
-	a.rootDir = *rootDirFlag
+	rootDir := flag.Arg(0)
+	if rootDir == "" {
+		rootDir = "."
+	}
+
+	a.rootDir = rootDir
 	a.selectedOrgs = selectedOrgs
 	a.excludedOrgs = excludedOrgs
 }
