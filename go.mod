@@ -10,8 +10,6 @@ require (
 )
 
 require (
-	github.com/DataDog/gostackparse v0.7.0 // indirect
 	github.com/cli/safeexec v1.0.1 // indirect
-	github.com/sean9999/pear v0.0.5 // indirect
 	github.com/smartystreets/goconvey v1.8.1 // indirect
 )
