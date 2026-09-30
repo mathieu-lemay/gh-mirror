@@ -63,16 +63,19 @@ func (a *state) shouldSyncOrg(org Org) bool {
 	return len(a.selectedOrgs) == 0 || slices.Contains(a.selectedOrgs, org.Name)
 }
 
-func (a *state) parseArgs() {
+func (a *state) parseArgs(args []string) {
+
+	flagSet := flag.NewFlagSet("args", flag.PanicOnError)
+
 	var selectedOrgs Strings
-	flag.Var(&selectedOrgs, "with-org", "comma separated list of orgs to sync, can be specified multiple times")
+	flagSet.Var(&selectedOrgs, "with-org", "comma separated list of orgs to sync, can be specified multiple times")
 
 	var excludedOrgs Strings
-	flag.Var(&excludedOrgs, "without-org", "comma separated list of orgs to skip, can be specified multiple times")
+	flagSet.Var(&excludedOrgs, "without-org", "comma separated list of orgs to skip, can be specified multiple times")
 
-	flag.Parse()
+	flagSet.Parse(args)
 
-	rootDir := flag.Arg(0)
+	rootDir := flagSet.Arg(0)
 	if rootDir == "" {
 		rootDir = "."
 	}
