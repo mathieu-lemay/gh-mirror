@@ -8,12 +8,12 @@ import (
 	"github.com/sean9999/hermeti"
 )
 
-func sync(env *hermeti.Env) error {
-	return runCli(env.OutStream, env.ErrStream, "repo", "sync")
+func sync(env *hermeti.Env, dir string) error {
+	return runCli(env.OutStream, env.ErrStream, &dir, "repo", "sync")
 }
 
-func clone(env *hermeti.Env, repo Repo) error {
-	return runCli(env.OutStream, env.ErrStream, "repo", "clone", repo.SshUrl, ".")
+func clone(env *hermeti.Env, repo Repo, dir string) error {
+	return runCli(env.OutStream, env.ErrStream, nil, "repo", "clone", repo.SshUrl, dir)
 }
 
 // EnsureSynced ensures a folder is a git repo and is synced to upstream,
@@ -28,24 +28,19 @@ func EnsureSynced(env *hermeti.Env, repo Repo, dir string) error {
 		return err
 	}
 	if isRepo {
-		return sync(env)
+		return sync(env, dir)
 	}
-	return clone(env, repo)
+	return clone(env, repo, dir)
 }
 
 // EnsureDir ensures a directory exists by creating it or making sure it's already there.
-// It also goes (chdir) into it.
 func EnsureDir(env *hermeti.Env, dir string) error {
 	info, err := env.Filesystem.Stat(dir)
 	if err != nil {
-		err = mkdirp.Mk(dir, 0755)
-		if err != nil {
-			return err
-		}
-		return env.Chdir(dir)
+		return mkdirp.Mk(dir, 0755)
 	}
 	if info.IsDir() == false {
 		return errors.New("not a dir")
 	}
-	return env.Chdir(dir)
+	return nil
 }
